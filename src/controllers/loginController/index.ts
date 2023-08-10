@@ -1,11 +1,27 @@
 // src/controllers/authController.ts
 
 import { Request, Response } from "express";
+import User from "../../models/user";
 
 const authController = {
   // 注册
-  register: (req: Request, res: Response) => {
-    console.log(req, res);
+  register: async (req: Request, res: Response) => {
+    const { username, password, email } = req.body;
+    //  根据条件查找文档（条件为空则查找所有文档）
+
+    console.log(req.body);
+    // 验证用户输入...
+
+    try {
+      // 创建新用户
+      const newUser = new User({ username, password, email });
+      await newUser.save();
+
+      return res.status(200).json({ message: "User registered successfully" });
+    } catch (error) {
+      User.find().then((result) => console.log(result));
+      return res.status(500).json({ message: "Registration failed" });
+    }
   },
   // 密码登录逻辑
   loginPassword: (req: Request, res: Response) => {

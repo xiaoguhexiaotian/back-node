@@ -12,6 +12,6 @@ router.get("/send/code", loginController.sendLoginCode);
 // 验证码登录
 router.post("/code", loginController.loginCode);
 // 注册账号
-router.post("register", loginController.register);
+router.post("/register", loginController.register);
 
 export default router;

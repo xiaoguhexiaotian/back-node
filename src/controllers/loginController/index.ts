@@ -80,15 +80,13 @@ const authController = {
       }
     } catch (err) {
       console.error("登录失败:", err);
-      return res
-        .status(500)
-        .json(
-          Object.assign(returnData, {
-            code: 500,
-            success: false,
-            message: "登录失败",
-          })
-        );
+      return res.status(500).json(
+        Object.assign(returnData, {
+          code: 500,
+          success: false,
+          message: "登录失败",
+        })
+      );
     }
   },
   // 获取验证码
@@ -98,6 +96,34 @@ const authController = {
   // 验证码登录逻辑
   loginCode: (req: Request, res: Response) => {
     console.log(req, res);
+  },
+  // 用户信息列表查询
+  userList: async (req: Request, res: Response) => {
+    const allUser = await User.find();
+    const returnData = {
+      code: 200,
+      success: true,
+      message: "成功",
+      result: {
+        records: allUser,
+      },
+      timestamp: new Date().getTime(),
+    };
+    return res.status(200).json(returnData);
+  },
+  // 删除用户
+  delUser: async (req: Request, res: Response) => {
+    const { id } = req.body;
+    console.log("用户id", id);
+    const result = await User.findOneAndDelete({ _id: id });
+    const returnData = {
+      code: 200,
+      message: "删除成功",
+      success: true,
+      timestamp: new Date().getTime(),
+    };
+    console.log(result);
+    return res.status(200).json(returnData);
   },
 };
 

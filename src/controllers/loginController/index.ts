@@ -6,54 +6,89 @@ import User from "../../models/user";
 const authController = {
   // 注册
   register: async (req: Request, res: Response) => {
-    const { username, password, email } = req.body;
-    //  根据条件查找文档（条件为空则查找所有文档）
-
-    console.log(req.body);
-    // 验证用户输入...
-
+    const { username, password } = req.body;
+    const returnData = {
+      code: 200,
+      timestamp: new Date().getTime(),
+    };
+    // 根据用户输入的账号去数据库查找,如果无该用户则向数据库写入这条数据
     try {
-      // 创建新用户
-      const newUser = new User({ username, password, email });
+      const result = await User.findOne({ username });
+      if (result) {
+        console.log("该用户已注册");
+        return res.status(200).json(
+          Object.assign(returnData, {
+            success: false,
+            message: "该用户已注册",
+          })
+        );
+      }
+      console.log("进入新增保存");
+      const newUser = new User({ username, password });
       await newUser.save();
-
-      return res.status(200).json({ message: "User registered successfully" });
+      return res.status(200).json(
+        Object.assign(returnData, {
+          success: true,
+          message: "注册成功",
+        })
+      );
     } catch (error) {
-      User.find().then((result) => console.log(result));
-      return res.status(500).json({ message: "Registration failed" });
+      // 用户名和密码必填校验暂时由前端校验拦截
+      console.error("注册失败:", error);
+      return res.status(500).json(
+        Object.assign(returnData, {
+          code: 500,
+          success: false,
+          message: "注册失败",
+        })
+      );
     }
   },
   // 密码登录逻辑
-  loginPassword: (req: Request, res: Response) => {
+  loginPassword: async (req: Request, res: Response) => {
     const { username, password } = req.body;
-    // 在这里编写登录逻辑，验证用户名和密码
-    if (username === "admin" && password === "123456") {
-      const returnData = {
-        code: 200,
-        success: true,
-        message: "登录成功",
-        timestamp: new Date().getTime(),
-      };
-      // 登录成功
-      return res.status(returnData.code).json(returnData);
-    } else if (username !== "admin") {
-      const returnData = {
-        code: 200,
-        success: false,
-        message: "用户名错误",
-        timestamp: new Date().getTime(),
-      };
-      // 登录失败
-      return res.status(returnData.code).json(returnData);
-    } else {
-      const returnData = {
-        code: 200,
-        success: false,
-        message: "密码错误",
-        timestamp: new Date().getTime(),
-      };
-      // 登录失败
-      return res.status(returnData.code).json(returnData);
+    const returnData = {
+      code: 200,
+      timestamp: new Date().getTime(),
+    };
+    try {
+      const user = await User.findOne({ username });
+      if (user) {
+        if (user.password === password) {
+          console.log("登录成功");
+          return res
+            .status(200)
+            .json(
+              Object.assign(returnData, { success: true, message: "登录成功" })
+            );
+        } else {
+          console.log("密码错误");
+          return res
+            .status(200)
+            .json(
+              Object.assign(returnData, { success: false, message: "密码错误" })
+            );
+        }
+      } else {
+        console.log("该用户未注册");
+        return res.status(200).json(
+          Object.assign(returnData, {
+            success: false,
+            message: "该用户未注册",
+          })
+        );
+      }
+    } catch (err) {
+      console.error("登录失败:", err);
+      return res
+        .status(500)
+        .json(
+          Object.assign(returnData, {
+            code: 500,
+            success: false,
+            message: "登录失败",
+          })
+        );
     }
   },
   // 获取验证码

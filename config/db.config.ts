@@ -10,7 +10,7 @@ mongoose.connect('mongodb://数据库地址:端口号/数据库名',{useMongoCli
 mongoose
   .connect("mongodb://localhost")
   .then(() => console.log("数据库连接成功"))
-  .catch((err) => console.log("数据库连接失败", err));
+  .catch((err: any) => console.log("数据库连接失败", err));
 
 // 3.监听mongodb数据库的连接状态
 // 绑定数据库连接成功事件

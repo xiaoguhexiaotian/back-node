@@ -3,6 +3,8 @@
 import { Request, Response } from "express";
 import User from "../../models/user";
 
+const jsonWebToken = require("jsonwebtoken");
+
 const authController = {
   // 注册
   register: async (req: Request, res: Response) => {
@@ -56,11 +58,26 @@ const authController = {
       if (user) {
         if (user.password === password) {
           console.log("登录成功");
-          return res
-            .status(200)
-            .json(
-              Object.assign(returnData, { success: true, message: "登录成功" })
-            );
+          //密钥
+          const SECRET_KEY = "tianwanggaidihu";
+          const token = jsonWebToken.sign(
+            {
+              exp: Math.floor(Date.now() / 1000) + 60 * 10,
+              userName: username,
+            },
+            SECRET_KEY
+            // {
+            //   expiresIn: 60 * 1, //token有效期 测试token验证，暂时1分钟
+            // }
+          );
+
+          return res.status(200).json(
+            Object.assign(returnData, {
+              success: true,
+              message: "登录成功",
+              result: token,
+            })
+          );
         } else {
           console.log("密码错误");
           return res

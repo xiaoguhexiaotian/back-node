@@ -1,13 +1,13 @@
 // src/controllers/authController.ts
 
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import User from "../../models/user";
 
 const jsonWebToken = require("jsonwebtoken");
 
 const authController = {
   // 注册
-  register: async (req: Request, res: Response) => {
+  register: async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
     const returnData = {
       code: 200,
@@ -37,17 +37,12 @@ const authController = {
     } catch (error) {
       // 用户名和密码必填校验暂时由前端校验拦截
       console.error("注册失败:", error);
-      return res.status(500).json(
-        Object.assign(returnData, {
-          code: 500,
-          success: false,
-          message: "注册失败",
-        })
-      );
+      // 将错误给错误中间件处理
+      next(error);
     }
   },
   // 密码登录逻辑
-  loginPassword: async (req: Request, res: Response) => {
+  loginPassword: async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
     const returnData = {
       code: 200,
@@ -95,27 +90,21 @@ const authController = {
           })
         );
       }
-    } catch (err) {
-      console.error("登录失败:", err);
-      return res.status(500).json(
-        Object.assign(returnData, {
-          code: 500,
-          success: false,
-          message: "数据库异常,请稍后再试",
-        })
-      );
+    } catch (error) {
+      console.error("登录失败:", error);
+      next(error);
     }
   },
   // 获取验证码
-  sendLoginCode: (req: Request, res: Response) => {
+  sendLoginCode: (req: Request, res: Response, next: NextFunction) => {
     console.log(req, res);
   },
   // 验证码登录逻辑
-  loginCode: (req: Request, res: Response) => {
+  loginCode: (req: Request, res: Response, next: NextFunction) => {
     console.log(req, res);
   },
   // 用户信息列表查询
-  userList: async (req: Request, res: Response) => {
+  userList: async (req: Request, res: Response, next: NextFunction) => {
     const allUser = await User.find();
     const returnData = {
       code: 200,
@@ -129,7 +118,7 @@ const authController = {
     return res.status(200).json(returnData);
   },
   // 删除用户
-  delUser: async (req: Request, res: Response) => {
+  delUser: async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.body;
     console.log("用户id", id);
     const result = await User.findOneAndDelete({ _id: id });

@@ -3,6 +3,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import loginRoutes from "./routes/login";
+import errorHandler from "./middleware/error/index";
 
 const app = express();
 const { expressjwt } = require("express-jwt");
@@ -19,21 +20,13 @@ app.use(
     algorithms: ["HS256"],
     // requestProperty: "testChen", 校验token后的用户信息默认存放在req.auth中,requestProperty可以自定义字段
   }).unless({
-    path: ["/login/password"],
+    path: ["/login/password", "/login/register"],
   }),
   loginRoutes
 ); // 设置登录相关的路由前缀
 
-app.use(function (err: any, req: any, res: any, next: any) {
-  if (err.name === "UnauthorizedError") {
-    const error = {
-      code: 500,
-      success: false,
-      message: "登录已过期请重新登录",
-    };
-    res.status(401).json(error);
-  }
-});
+// 在路由之后使用错误处理中间件
+app.use(errorHandler);
 
 app.get("/hello", function (req, res) {
   res.send("hello express");

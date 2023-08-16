@@ -62,20 +62,20 @@ const authController = {
           const SECRET_KEY = "tianwanggaidihu";
           const token = jsonWebToken.sign(
             {
-              exp: Math.floor(Date.now() / 1000) + 60 * 10,
+              // exp: Math.floor(Date.now() / 1000) + 60 * 0.1,
               userName: username,
             },
-            SECRET_KEY
-            // {
-            //   expiresIn: 60 * 1, //token有效期 测试token验证，暂时1分钟
-            // }
+            SECRET_KEY,
+            {
+              expiresIn: 10, //token有效期 测试token验证，暂时1分钟
+            }
           );
 
           return res.status(200).json(
             Object.assign(returnData, {
               success: true,
               message: "登录成功",
-              result: token,
+              result: `Bearer ${token}`,
             })
           );
         } else {
@@ -101,7 +101,7 @@ const authController = {
         Object.assign(returnData, {
           code: 500,
           success: false,
-          message: "登录失败",
+          message: "数据库异常,请稍后再试",
         })
       );
     }

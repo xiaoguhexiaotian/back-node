@@ -8,7 +8,17 @@ import errorHandler from "./middleware/error/index";
 const app = express();
 const { expressjwt } = require("express-jwt");
 const SECRET_KEY = "tianwanggaidihu";
+const session = require("express-session");
 require("../config/db.config");
+
+// 使用 express-session 中间件
+app.use(
+  session({
+    secret: "your_secret_key", // 用于签名会话 ID 的安全密钥
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 app.use(bodyParser.json());
 // 注册登录模块/第一个参数为前缀，所以实际的接口地址前需要拼接 /login

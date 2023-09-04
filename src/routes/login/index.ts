@@ -8,7 +8,7 @@ const router = express.Router();
 // 密码登录
 router.post("/password", loginController.loginPassword);
 // 获取登录验证码
-router.get("/send/code", loginController.sendLoginCode);
+router.get("/get/code", loginController.sendLoginCode);
 // 验证码登录
 router.post("/code", loginController.loginCode);
 // 注册账号

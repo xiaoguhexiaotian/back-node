@@ -1,9 +1,8 @@
 import { Mongoose } from "mongoose";
 
+export const mongoose = new Mongoose();
+// 1.引入mongoose
 export const dbConfig = () => {
-  // 1.引入mongoose
-  const mongoose = new Mongoose();
-
   // 2.连接mongodb数据库
   // 指定连接数据库后不需要存在，当你插入第一条数据库后会自动创建数据库
   /*

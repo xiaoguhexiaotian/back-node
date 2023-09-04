@@ -2,9 +2,9 @@
 
 import { Request, Response, NextFunction } from "express";
 import User from "../../models/user";
+import jsonWebToken from "jsonwebtoken";
+import { generateCaptcha } from "../../middleware/code/index";
 
-const jsonWebToken = require("jsonwebtoken");
-const generateCaptcha = require("../../middleware/code/index"); // 引入验证码生成中间件
 //密钥
 const SECRET_KEY = "tianwanggaidihu";
 const authController = {
@@ -46,6 +46,7 @@ const authController = {
   // 密码登录逻辑
   loginPassword: async (req: any, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
+    console.log(req.body);
     const returnData = {
       code: 200,
       timestamp: new Date().getTime(),

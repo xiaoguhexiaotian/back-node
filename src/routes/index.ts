@@ -1,4 +1,4 @@
-import loginRoutes from "./login"; // 登录
+import loginRoutes, { whiteList } from "./login"; // 登录
 import { SECRET_KEY } from "../config/app.config"; // 引入应用配置文件
 import { expressjwt } from "express-jwt"; // token校验
 
@@ -12,7 +12,7 @@ export const initRoute = (app: any) => {
       algorithms: ["HS256"],
       // requestProperty: "testChen", 校验token后的用户信息默认存放在req.auth中,requestProperty可以自定义字段
     }).unless({
-      path: ["/login/password", "/login/register"],
+      path: whiteList,
     }),
     loginRoutes
   ); // 设置登录相关的路由前缀

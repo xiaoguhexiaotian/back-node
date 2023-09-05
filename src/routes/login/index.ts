@@ -18,4 +18,11 @@ router.get("/userList", loginController.userList);
 // 删除用户
 router.post("/delUser", loginController.delUser);
 
+export const whiteList = [
+  "/login/password",
+  "/login/register",
+  "/login/get/code",
+  "/login/code",
+];
+
 export default router;

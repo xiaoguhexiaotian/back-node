@@ -4,9 +4,8 @@ import { Request, Response, NextFunction } from "express";
 import User from "../../models/user";
 import jsonWebToken from "jsonwebtoken";
 import { generateCaptcha } from "../../middleware/code/index";
+import { SECRET_KEY } from "../../config/app.config"; // 引入应用配置文件
 
-//密钥
-const SECRET_KEY = "tianwanggaidihu";
 const authController = {
   // 注册
   register: async (req: Request, res: Response, next: NextFunction) => {
@@ -119,9 +118,15 @@ const authController = {
   loginCode: async (req: any, res: Response, next: NextFunction) => {
     const { username, code } = req.body;
     const storedCode = req.session.code.text;
+    const returnErrorData = {
+      code: 200,
+      success: false,
+      message: "验证码已过期",
+      timestamp: new Date().getTime(),
+    };
     // 检查验证码是否存在
     if (!storedCode) {
-      return res.status(400).json({ error: "验证码已过期" });
+      return res.status(200).json(returnErrorData);
     }
     // 检查验证码是否超过有效期（例如，5分钟）
     const currentTime = Date.now();
@@ -131,12 +136,12 @@ const authController = {
     if (currentTime - captchaTimestamp > captchaValidityPeriod) {
       // 验证码已过期
       req.session.captcha = null; // 清除过期的验证码
-      return res.status(400).json({ error: "验证码已过期" });
+      return res.status(200).json(returnErrorData);
     }
 
     // 验证验证码是否正确
     if (code !== storedCode) {
-      return res.status(400).json({ error: "验证码不正确" });
+      return res.status(200).json({...returnErrorData,message:'验证码不正确'});
     } else {
       const user = await User.findOne({ username });
       if (user) {

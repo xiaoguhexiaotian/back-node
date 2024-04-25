@@ -9,7 +9,13 @@
    ### 项目启动
 
    ```
-   node app.js
+   nodemon app.ts
    ```
 
-   
+### 	  依赖库
+
+1. typescript
+2. ts-node
+3. nodemon
+4. MongoDB
+

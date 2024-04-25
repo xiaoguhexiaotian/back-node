@@ -10,7 +10,7 @@ mongoose.connect('mongodb://数据库地址:端口号/数据库名',{useMongoCli
 如果端口号是默认端口号(27017)则可以省略不写
 */
   mongoose
-    .connect("mongodb://localhost")
+    .connect("mongodb://127.0.0.1")
     .then(() => console.log("数据库连接成功"))
     .catch((err: any) => console.log("数据库连接失败", err));
 

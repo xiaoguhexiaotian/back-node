@@ -7,6 +7,7 @@ import { initRoute } from "./routes/index";
 import { initErrorHandler } from "./middleware/error/index";
 import { initBodyParser } from "./middleware/bodyParser";
 import { PORT } from "./middleware/env/index";
+import { initSocket } from "./socket/chat";
 // 初始化服务
 const initService = () => {
   const app = express();
@@ -21,6 +22,8 @@ const initService = () => {
   initRoute(app);
   // 注册错误中间件
   initErrorHandler(app);
+  // 初始化socket
+  initSocket();
 
   app.listen(PORT, () => {
     console.log("服务端已启动,正在监听端口", PORT);
